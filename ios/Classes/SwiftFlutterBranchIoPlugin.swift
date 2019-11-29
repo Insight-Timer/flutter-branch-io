@@ -55,32 +55,36 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
         let lpCampaign = args?["lp_campaign"] as? String?
         let lpStage = args?["lp_stage"] as? String?
         let lpParams = args?["lp_control_params"] as? [String: Any?]?
-
+    
         let buo: BranchUniversalObject? = convertStringToBUO(text: buoJson!!)
-
+    
         let lp: BranchLinkProperties = BranchLinkProperties()
-        if lpChannel != nil {
-            lp.channel = lpChannel as! String
+        if (lpChannel != nil) {
+            lp.channel = String(describing: lpChannel)
         }
-        if lpFeature != nil {
-            lp.feature = lpFeature as! String
+        if (lpFeature != nil) {
+            lp.feature = String(describing: lpFeature)
         }
-        if lpCampaign != nil {
-            lp.campaign = lpCampaign as! String
+        if (lpCampaign != nil) {
+            lp.campaign = String(describing: lpCampaign)
         }
-        if lpStage != nil {
-            lp.stage = lpStage as! String
+        if (lpStage != nil) {
+            lp.stage = String(describing: lpStage)
         }
-        if lpParams != nil {
+        if (lpParams != nil) {
             for param in lpParams!! {
                 lp.addControlParam(param.key, withValue: param.value as? String)
             }
         }
-
-        buo?.getShortUrl(with: lp) { url, _ in
-            self.sendUrlToSink(url: url!)
+    
+        buo?.getShortUrl(with: lp) { (url, error) in
+        guard let urlSting = url  else {
+            return
+        }
+        self.sendUrlToSink(url: urlSting)
         }
         result("Success generating Link!")
+
     }
 
     private func listOnGoogleSearch(call _: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -97,23 +101,23 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
         result("Success Log Event")
     }
 
-    private func setUserIdentity(call: FlutterMethodCall, result _: @escaping FlutterResult) {
+    private func setUserIdentity(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as? [String: Any?]
         let userId = args?["userId"] as! String?
-        Branch.getInstance().setIdentity(userId)
+        Branch.getInstance()?.setIdentity(userId)
     }
-
-    private func clearUserIdentity(call _: FlutterMethodCall, result _: @escaping FlutterResult) {
-        Branch.getInstance().logout()
+    
+    private func clearUserIdentity(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        Branch.getInstance()?.logout()
     }
 
     private func getLatestParam(call _: FlutterMethodCall, result: @escaping FlutterResult) {
-        let latestParams = Branch.getInstance().getLatestReferringParams()
+        let latestParams = Branch.getInstance()?.getLatestReferringParams()
         result(latestParams)
     }
 
     private func getFirstParam(call _: FlutterMethodCall, result: @escaping FlutterResult) {
-        let firstParams = Branch.getInstance().getFirstReferringParams()
+        let firstParams = Branch.getInstance()?.getFirstReferringParams()
         result(firstParams)
     }
 
@@ -145,7 +149,7 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
     override public func application(
         _ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable: Any]
     ) -> Bool {
-        Branch.getInstance().initSession(launchOptions: launchOptions) { params, error in
+        Branch.getInstance()?.initSession(launchOptions: launchOptions) { params, error in
             // do stuff with deep link data (nav to page, display content, etc)
             print(params as? [String: AnyObject] ?? {})
             if SwiftFlutterBranchIoPlugin.eventHandler?.eventSink != nil {
@@ -166,18 +170,18 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
 
 
     override public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        let branchHandled = Branch.getInstance().application(app, open: url, options: options) ?? false
+        let branchHandled = Branch.getInstance()?.application(app, open: url, options: options) ?? false
         return branchHandled
     }
 
     @nonobjc override public func application(_ app: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void) {
         // handler for Push Notifications
-        Branch.getInstance().handlePushNotification(userInfo)
+        Branch.getInstance()?.handlePushNotification(userInfo)
     }
 
     public func application(_ app: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         // handler for Universal Links
-        let handledByBranch = Branch.getInstance().continue(userActivity) ?? false
+        let handledByBranch = Branch.getInstance()?.continue(userActivity) ?? false
         return handledByBranch
     }
 }
