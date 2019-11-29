@@ -55,36 +55,32 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
         let lpCampaign = args?["lp_campaign"] as? String?
         let lpStage = args?["lp_stage"] as? String?
         let lpParams = args?["lp_control_params"] as? [String: Any?]?
-    
+
         let buo: BranchUniversalObject? = convertStringToBUO(text: buoJson!!)
-    
+
         let lp: BranchLinkProperties = BranchLinkProperties()
-        if (lpChannel != nil) {
-            lp.channel = String(describing: lpChannel)
+        if lpChannel != nil {
+            lp.channel = lpChannel as! String
         }
-        if (lpFeature != nil) {
-            lp.feature = String(describing: lpFeature)
+        if lpFeature != nil {
+            lp.feature = lpFeature as! String
         }
-        if (lpCampaign != nil) {
-            lp.campaign = String(describing: lpCampaign)
+        if lpCampaign != nil {
+            lp.campaign = lpCampaign as! String
         }
-        if (lpStage != nil) {
-            lp.stage = String(describing: lpStage)
+        if lpStage != nil {
+            lp.stage = lpStage as! String
         }
-        if (lpParams != nil) {
+        if lpParams != nil {
             for param in lpParams!! {
                 lp.addControlParam(param.key, withValue: param.value as? String)
             }
         }
-    
-        buo?.getShortUrl(with: lp) { (url, error) in
-        guard let urlSting = url  else {
-            return
-        }
-        self.sendUrlToSink(url: urlSting)
+
+        buo?.getShortUrl(with: lp) { url, _ in
+            self.sendUrlToSink(url: url!)
         }
         result("Success generating Link!")
-
     }
 
     private func listOnGoogleSearch(call _: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -101,13 +97,13 @@ public class SwiftFlutterBranchIoPlugin: FlutterPluginAppLifeCycleDelegate, Flut
         result("Success Log Event")
     }
 
-    private func setUserIdentity(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    private func setUserIdentity(call: FlutterMethodCall, result _: @escaping FlutterResult) {
         let args = call.arguments as? [String: Any?]
         let userId = args?["userId"] as! String?
         Branch.getInstance()?.setIdentity(userId)
     }
-    
-    private func clearUserIdentity(call: FlutterMethodCall, result: @escaping FlutterResult) {
+
+    private func clearUserIdentity(call _: FlutterMethodCall, result _: @escaping FlutterResult) {
         Branch.getInstance()?.logout()
     }
 
