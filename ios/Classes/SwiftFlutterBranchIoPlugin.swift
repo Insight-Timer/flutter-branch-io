@@ -108,31 +108,31 @@ public class SwiftFlutterBranchIoPlugin: NSObject, FlutterPlugin, FlutterStreamH
     
     private func setUserIdentity(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as? [String: Any?]
-        let userId = args?["userId"] as! String?
-        if let userId = Branch.getInstance()?.setIdentity(userId) {
-            result(userId)
-        }
+        _ = args?["userId"] as! String?
+//        if let userId = Branch.getInstance()?.setIdentity(userId) {
+//            result(userId)
+//        }
         return
     }
     
     private func clearUserIdentity(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if let logout = Branch.getInstance()?.logout() {
-            result(logout)
-        }
+//        if let logout = Branch.getInstance()?.logout() {
+//            result(logout)
+//        }
         return
     }
     
     private func getLatestParam(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if let latestParams = Branch.getInstance()?.getLatestReferringParams() {
-            result(latestParams)
-        }
+//        if let latestParams = Branch.getInstance()?.getLatestReferringParams() {
+//            result(latestParams)
+//        }
         return
     }
     
     private func getFirstParam(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if let firstParams = Branch.getInstance()?.getFirstReferringParams() {
-            result(firstParams)
-        }
+//        if let firstParams = Branch.getInstance()?.getFirstReferringParams() {
+//            result(firstParams)
+//        }
         return
     }
     
